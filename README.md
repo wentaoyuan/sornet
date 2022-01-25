@@ -15,7 +15,6 @@ If you find our work useful, please consider citing our paper:
     year         = {2021}
     organization = {PMLR}
 }
-}
 ```
 
 ## Setup
@@ -34,13 +33,19 @@ In this experiment, we ask SORNet to predict spatial relations (left, right, fro
 
 - To evaluate accuracy of the pretrained model:
     ```
-    python test_clevr.py --data data/clevr_cogent --split valB --checkpoint models/clevr_cogent.pth
+    python test_clevr.py \
+        --data data/clevr_cogent \
+        --split valB \
+        --checkpoint models/clevr_cogent.pth
     ```
     - Use the `--split` flag to switch between `valA` (same set of objects as training) and `valB` (different set of objects from training).
 
 - To visualize the prediction:
     ```
-    python visualize_clevr.py 0 left large_red_rubber_cube small_green_metal_sphere --data data/clevr_cogent --split valB --checkpoint models/clevr_cogent.pth
+    python visualize_clevr.py 0 left large_red_rubber_cube small_green_metal_sphere \
+        --data data/clevr_cogent \
+        --split valB \
+        --checkpoint models/clevr_cogent.pth
     ```
     - The command syntax is `python visualize_clevr.py [frame_index] [relation] [object1] [object2]`.
     - To see the list of available objects, run the following inside a python interactive shell:
@@ -65,7 +70,12 @@ The pretrained model has not seen any of the test objects. It can also generaliz
 
 - To evaluate accuracy of the pretrained model:
     ```
-    python test_leonardo.py --data_dir data/leonardo --split test_4obj --obj_file test_objects.h5 --n_views 3 --checkpoint models/leonardo_3view.pth
+    python test_leonardo.py \
+        --data_dir data/leonardo \
+        --split test_4obj \
+        --obj_file test_objects.h5 \
+        --n_views 3 \
+        --checkpoint models/leonardo_3view.pth
     ```
     - Use the `--split` flag to switch among test sets including 4 (`test_4obj`), 5 (`test_5obj`) and 6 (`test_6obj`) objects.
     - Use the `--n_views` flag to select the number of views (1 or 3) used for evaluation.
@@ -73,7 +83,11 @@ The pretrained model has not seen any of the test objects. It can also generaliz
 
 - To visualize the prediction
     ```
-    python visualize_leonardo.py --data data/leonardo --split test_4obj --obj test_objects.h5 --checkpoint models/leonardo_3view.pth
+    python visualize_leonardo.py \
+        --data data/leonardo \
+        --split test_4obj \
+        --obj test_objects.h5 \
+        --checkpoint models/leonardo_3view.pth
     ```
     - Use the `--split` flag to switch among test sets (`test_4obj|test_5obj|test_6obj`).
     - Use `--seq_id` and `--frame_id` to choose the sequence and frame to visualize.
@@ -81,7 +95,11 @@ The pretrained model has not seen any of the test objects. It can also generaliz
 
 - To visualize learned attention:
     ```
-    python visualize_attention.py --data leonardo --split test_4obj --obj test_objects.h5 --checkpoint models/leonardo_3view.pth
+    python visualize_attention.py \
+        --data leonardo \
+        --split test_4obj \
+        --obj test_objects.h5 \
+        --checkpoint models/leonardo_3view.pth
     ```
     - Use the `--split` flag to switch among test sets (`test_4obj|test_5obj|test_6obj`).
     - Use `--seq_id` and `--frame_id` to choose the sequence and frame to visualize.
@@ -103,14 +121,26 @@ In this experiment, we train readout networks to regress continuous 3D direction
 
 - To evaluate accuracy of the pretrained model:
     ```
-    python test_regression.py --data data/leonardo --split test_4obj --obj_file test_objects.h5 --n_views 3 --model models/leonardo_3view.pth --head_checkpoint models/leonardo_regression_obj-obj_dir_3view.pth
+    python test_regression.py \
+        --data data/leonardo \
+        --split test_4obj \
+        --obj_file test_objects.h5 \
+        --n_views 3 \
+        --model models/leonardo_3view.pth \
+        --head_checkpoint models/leonardo_regression_obj-obj_dir_3view.pth
     ```
     - Use the `--dist` flag to test models trained to regress distance instead of unit xyz direction (e.g. `models/leonardo_regression_obj-obj_dist_3view.pth`).
     - Use the `--ee` flag to test models trained to regress quatinties from end effector to objects instead of between pairs of objects (e.g. `models/leonardo_regression_ee-obj_dir_3view.pth`).
 
 - To visualize the prediction:
     ```
-    python visualize_regression.py --data data/leonardo --split test_4obj --obj test_objects.h5 --model models/leonardo_3view.pth --dir_head models/leonardo_regression_obj-obj_dir_3view.pth --dist_head models/leonardo_regression_obj-obj_dist_3view.pth
+    python visualize_regression.py \
+        --data data/leonardo \
+        --split test_4obj \
+        --obj test_objects.h5 \
+        --model models/leonardo_3view.pth \
+        --dir_head models/leonardo_regression_obj-obj_dir_3view.pth \
+        --dist_head models/leonardo_regression_obj-obj_dist_3view.pth
     ```
     - Use the `--split` flag to switch among test sets (`test_4obj|test_5obj|test_6obj`).
     - Use `--seq_id` and `--frame_id` to choose the sequence and frame to visualize.
@@ -119,7 +149,10 @@ In this experiment, we train readout networks to regress continuous 3D direction
 
 - To train a new model:
     ```
-    python train_leonardo.py --data data/leonardo --log log/regression/obj-obj_dir --model models/leonardo_3view.pth
+    python train_leonardo.py \
+        --data data/leonardo \
+        --log log/regression/obj-obj_dir \
+        --model models/leonardo_3view.pth
     ```
     - Use `--model [checkpoint]` to specify weights for the pretrained embedding network.
     - Use `--ee` to train models that regress quatinties from end effector to objects.
