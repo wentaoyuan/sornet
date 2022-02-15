@@ -56,14 +56,14 @@ def calc_accuracy_allmatch(pred, target, keys, names):
 
 
 def calc_f1(pred, target):
-    mask = target.shape[0] - target.sum(axis=0) < target.sum(axis=0)
-    pred[:, mask] = ~pred[:, mask]
-    target[:, mask] = ~target[:, mask]
+    majority_is_one = target.shape[0] - target.sum(axis=0) < target.sum(axis=0)
+    pred[:, majority_is_one] = ~pred[:, majority_is_one]
+    target[:, majority_is_one] = ~target[:, majority_is_one]
     tp = (pred & target).sum(axis=0)
     fp = (pred & ~target).sum(axis=0)
     fn = (~pred & target).sum(axis=0)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
+    precision = tp / (tp + fp) * 100
+    recall = tp / (tp + fn) * 100
     f1 = 2 * precision * recall / (precision + recall)
     f1[np.isnan(f1)] = 0
     return f1
@@ -112,10 +112,10 @@ if __name__ == '__main__':
     pred_names = build_predicates(objects, unary_pred, binary_pred)
 
     loaders = []
-    for i in range(args.n_views):
+    for v in range(args.n_views):
         data = LeonardoDataset(
             args.data_dir, args.split, pred_names, args.obj_file, args.colors,
-            randpatch=False, view=i, randview=False, gripper=args.gripper
+            randpatch=False, view=v, randview=False, gripper=args.gripper
         )
         loaders.append(DataLoader(
             data, args.batch_size, pin_memory=True, num_workers=args.n_worker

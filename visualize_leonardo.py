@@ -66,22 +66,25 @@ if __name__ == '__main__':
 
     n_frames = json.load(open(f'{args.data_dir}/{args.split}_nframes.json'))
     sequences = list(n_frames.keys())
-    h5 = h5py.File(f'{args.data_dir}/{args.split}.h5', 'r')
-    all_predicates = h5['predicates'][()].decode().split('|')
+    if args.seq_id >= len(sequences):
+        print(
+            'Sequence', args.seq_id, 'out of range. ',
+            'Total number of sequences is', len(sequences)
+        )
+
+    data = h5py.File(f'{args.data_dir}/{args.split}.h5')
+    all_predicates = data['predicates'][()].decode().split('|')
     pred_ids = {pred: i for i, pred in enumerate(all_predicates)}
     objects = [f'object{i:02d}' for i in range(args.n_objects)]
     predicates = build_predicates(objects, unary_pred, binary_pred)
     pred_ids = [pred_ids[pred] for pred in predicates]
 
-    data = h5[sequences[args.seq_id]]
-    if args.frame_id > data[f'rgb{args.view}'].shape[0]:
+    data = data[sequences[args.seq_id]]
+    if args.frame_id >= data['logical'].shape[0]:
         print(
-            'Frame', args.frame_id, 'out of range. Length of current sequence is',
-            data[f'rgb{args.view}'].shape[0]
+            'Frame', args.frame_id, 'out of range. ',
+            'Length of thecurrent sequence is', data['logical'].shape[0]
         )
-    rgb = Image.open(BytesIO(data[f'rgb{args.view}'][args.frame_id]))
-    rgb = rgb.convert('RGB').resize((args.img_w, args.img_h))
-    img = normalize_rgb(rgb).unsqueeze(0).cuda()
 
     colors = args.colors
     if colors is None:
@@ -93,9 +96,6 @@ if __name__ == '__main__':
         patch_tensors = torch.stack(
             [normalize_rgb(p) for p in obj_patches]
         ).unsqueeze(0).cuda()
-
-    target = data['logical'][args.frame_id][pred_ids]
-    target = torch.from_numpy(target).unsqueeze(0)
 
     model = EmbeddingNet(
         (args.img_w, args.img_h), args.patch_size, len(colors),
@@ -109,6 +109,13 @@ if __name__ == '__main__':
     head.load_state_dict(checkpoint['head'])
     model = model.cuda().eval()
     head = head.cuda().eval()
+
+    rgb = Image.open(BytesIO(data[f'rgb{args.view}'][args.frame_id]))
+    rgb = rgb.convert('RGB').resize((args.img_w, args.img_h))
+    img = normalize_rgb(rgb).unsqueeze(0).cuda()
+
+    target = data['logical'][args.frame_id][pred_ids]
+    target = torch.from_numpy(target).unsqueeze(0)
 
     with torch.no_grad():
         emb, attn = model(img, patch_tensors)
