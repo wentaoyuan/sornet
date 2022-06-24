@@ -18,7 +18,7 @@ If you find our work useful, please consider citing our paper:
 ```
 
 ## Setup
-- Install dependencies by `conda create -f environment.yml`.
+- Install dependencies by `conda env create -f environment.yml`.
 - Activate virtual environment by `conda activate sornet`.
 - Download data ([clevr](https://drive.google.com/drive/folders/1Shgm4IjBYyupu7376uzcs9X7rArm10ui) and [leonardo](https://drive.google.com/drive/folders/1YsYkvSTM8rqkyPAmEnbmwu6J6_R4qq2V)) and copy or sym link to `data/`.
 - Download [pre-trained models](https://drive.google.com/drive/folders/1kXPBnQI46VxQfAEqoaCeFLZfRn8HH3at) and copy or sym link to `models/`.
